@@ -114,6 +114,7 @@ class EntityManager {
       return;
     }
 
+    entity._componentsToRemove.remove(componentType);
     entity._componentTypes.remove(componentType);
     final component = entity._components.remove(componentType);
     component?.dispose();
@@ -147,6 +148,20 @@ class EntityManager {
     entity.alive = false;
 
     _entitiesToRemove.add(entity);
+  }
+
+  /// Process all removed components from the last execute cycle.
+  void processRemovedComponent() {
+    _entitiesWithRemovedComponents.forEach(_releaseComponentsFromEntity);
+    _entitiesWithRemovedComponents.clear();
+  }
+
+  /// Fully release and reset an component.
+  void _releaseComponentsFromEntity(Entity entity) {
+    // Make a copy so we can update this set while looping over it.
+    final components = entity._componentsToRemove.toList();
+    components
+        .forEach((component) => _removeComponentFromEntity(entity, component));
   }
 
   /// Process all removed entities from the last execute cycle.

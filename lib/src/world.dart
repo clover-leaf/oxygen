@@ -62,6 +62,7 @@ class World {
   /// Execute everything in the World once.
   void execute(double delta) {
     systemManager._execute(delta);
+    entityManager.processRemovedComponent();
     entityManager.processRemovedEntities();
   }
 }
